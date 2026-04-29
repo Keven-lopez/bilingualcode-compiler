@@ -116,6 +116,8 @@ operator
 START       : 'start' | 'inicio';
 FINISH      : 'finish' | 'fin';
 
+COMMENT : '//' ~[\r\n]* -> skip;
+
 // Variable declarations
 DEFINE      : 'define' | 'definir';
 AS          : 'as' | 'como';
@@ -203,6 +205,10 @@ WS
     ;
 
 // Lexical error token
+INVALID_IDENTIFIER
+    : [0-9]+[a-zA-Z_]+[a-zA-Z0-9_]*
+    ;
+
 ERROR_CHAR
     : .
     ;
