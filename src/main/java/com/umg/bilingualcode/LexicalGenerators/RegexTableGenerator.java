@@ -1,4 +1,4 @@
-package com.umg.bilingualcode.TableGenerators;
+package com.umg.bilingualcode.LexicalGenerators;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

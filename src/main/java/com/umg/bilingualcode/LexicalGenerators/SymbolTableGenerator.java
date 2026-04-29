@@ -1,4 +1,4 @@
-package com.umg.bilingualcode.TableGenerators;
+package com.umg.bilingualcode.LexicalGenerators;
 
 import com.umg.bilingualcode.SpanglishCodeLexer;
 import org.antlr.v4.runtime.Token;

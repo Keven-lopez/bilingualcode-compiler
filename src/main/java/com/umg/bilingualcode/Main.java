@@ -1,11 +1,13 @@
 package com.umg.bilingualcode;
 
 
+import com.umg.bilingualcode.SyntacticGenerators.SyntacticTreeGenerator;
 import org.antlr.v4.runtime.*;
 import java.io.IOException;
 import java.util.List;
 
-import com.umg.bilingualcode.TableGenerators.*;
+import com.umg.bilingualcode.LexicalGenerators.*;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 
 public class Main {
@@ -14,15 +16,19 @@ public class Main {
         try {
             String sourceFile = "input.spc";
 
+            // Read source file
             CharStream input = CharStreams.fromFileName(sourceFile);
 
+            // Lexer
             SpanglishCodeLexer lexer = new SpanglishCodeLexer(input);
 
+            // Token stream
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             tokens.fill();
 
             List<Token> tokenList = tokens.getTokens();
 
+            // Generate lexical analysis outputs
             SymbolTableGenerator symbolTableGenerator = new SymbolTableGenerator();
             symbolTableGenerator.generate(tokenList);
 
@@ -32,9 +38,20 @@ public class Main {
             RegexTableGenerator regexTableGenerator = new RegexTableGenerator();
             regexTableGenerator.generate();
 
-            SpanglishCodeParser parser = new SpanglishCodeParser(tokens);
-            parser.program();
+            // Reset token stream before parsing
+            tokens.seek(0);
 
+            // Parser
+            SpanglishCodeParser parser = new SpanglishCodeParser(tokens);
+
+            // Parse once and store tree
+            ParseTree tree = parser.program();
+
+            // Generate syntax tree output
+            SyntacticTreeGenerator syntacticTreeGenerator = new SyntacticTreeGenerator();
+            syntacticTreeGenerator.generate(tree, parser);
+
+            // Compilation status
             if (parser.getNumberOfSyntaxErrors() == 0) {
                 System.out.println("Compilation successful.");
             } else {
