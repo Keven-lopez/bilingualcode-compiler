@@ -3,7 +3,9 @@ package com.umg.bilingualcode;
 import org.antlr.v4.runtime.*;
 import java.io.IOException;
 import java.util.List;
+
 import com.umg.bilingualcode.TableGenerators.SymbolTableGenerator;
+import com.umg.bilingualcode.TableGenerators.LexicalErrorGenerator;
 
 public class Main {
 
@@ -23,10 +25,10 @@ public class Main {
             SymbolTableGenerator symbolTableGenerator = new SymbolTableGenerator();
             symbolTableGenerator.generate(tokenList);
 
-            /*LexicalErrorGenerator lexicalErrorGenerator = new LexicalErrorGenerator();
+            LexicalErrorGenerator lexicalErrorGenerator = new LexicalErrorGenerator();
             lexicalErrorGenerator.generate(tokenList);
 
-            RegexTableGenerator regexTableGenerator = new RegexTableGenerator();
+            /*RegexTableGenerator regexTableGenerator = new RegexTableGenerator();
             regexTableGenerator.generate();*/
 
             SpanglishCodeParser parser = new SpanglishCodeParser(tokens);
