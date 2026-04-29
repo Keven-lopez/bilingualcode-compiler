@@ -34,39 +34,98 @@ public class SymbolTableGenerator {
         for (int i = 0; i < tokens.size(); i++) {
             Token token = tokens.get(i);
 
-            // Detect declarations:
+            // -------------------------------
+            // VARIABLES
             // define edad como numero;
+            // -------------------------------
             if (token.getType() == SpanglishCodeLexer.DEFINE) {
 
                 Token identifier = tokens.get(i + 1);
                 Token typeToken = tokens.get(i + 3);
 
-                String varName = identifier.getText();
-                String varType = typeToken.getText();
-
-                symbolTable.put(varName,
+                symbolTable.put(identifier.getText(),
                         new SymbolInfo(
-                                varName,
+                                identifier.getText(),
                                 "Variable",
-                                varType,
+                                typeToken.getText(),
                                 "null",
                                 identifier.getLine()
                         )
                 );
             }
 
-            // Detect assignments:
+            // -------------------------------
+            // CONSTANTS
+            // const PI como numero = 3.14;
+            // -------------------------------
+            if (token.getText().equals("const")) {
+
+                Token identifier = tokens.get(i + 1);
+                Token typeToken = tokens.get(i + 3);
+                Token valueToken = tokens.get(i + 5);
+
+                symbolTable.put(identifier.getText(),
+                        new SymbolInfo(
+                                identifier.getText(),
+                                "Constant",
+                                typeToken.getText(),
+                                valueToken.getText(),
+                                identifier.getLine()
+                        )
+                );
+            }
+
+            // -------------------------------
+            // ASSIGNMENTS
             // poner edad a 20;
+            // -------------------------------
             if (token.getType() == SpanglishCodeLexer.SET) {
 
                 Token identifier = tokens.get(i + 1);
                 Token valueToken = tokens.get(i + 3);
 
-                String varName = identifier.getText();
-                String value = valueToken.getText();
+                if (symbolTable.containsKey(identifier.getText())) {
+                    symbolTable.get(identifier.getText()).value = valueToken.getText();
+                }
+            }
 
-                if (symbolTable.containsKey(varName)) {
-                    symbolTable.get(varName).value = value;
+            // -------------------------------
+            // FUNCTIONS
+            // function sumar(a,b) do
+            // -------------------------------
+            if (token.getType() == SpanglishCodeLexer.FUNCTION) {
+
+                Token functionName = tokens.get(i + 1);
+
+                symbolTable.put(functionName.getText(),
+                        new SymbolInfo(
+                                functionName.getText(),
+                                "Function",
+                                "-",
+                                "-",
+                                functionName.getLine()
+                        )
+                );
+
+                // Parameters inside (...)
+                int j = i + 3;
+                while (tokens.get(j).getType() != SpanglishCodeLexer.RPAREN) {
+
+                    Token param = tokens.get(j);
+
+                    if (param.getType() == SpanglishCodeLexer.IDENTIFIER) {
+                        symbolTable.put(param.getText(),
+                                new SymbolInfo(
+                                        param.getText(),
+                                        "Parameter",
+                                        "-",
+                                        "-",
+                                        param.getLine()
+                                )
+                        );
+                    }
+
+                    j++;
                 }
             }
         }
@@ -77,16 +136,19 @@ public class SymbolTableGenerator {
     private void writeSymbolTable(Map<String, SymbolInfo> symbolTable) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter("output/symbol_table.txt"));
 
-        writer.write("LEXEME\tCATEGORY\tTYPE\tVALUE\tLINE\n");
+        writer.write(String.format("%-20s %-15s %-12s %-15s %-5s%n",
+                "LEXEME", "CATEGORY", "TYPE", "VALUE", "LINE"));
+
+        writer.write(String.format("%-20s %-15s %-12s %-15s %-5s%n",
+                "--------------------", "---------------", "------------", "---------------", "-----"));
 
         for (SymbolInfo symbol : symbolTable.values()) {
-            writer.write(
-                    symbol.lexeme + "\t" +
-                            symbol.category + "\t" +
-                            symbol.type + "\t" +
-                            symbol.value + "\t" +
-                            symbol.line + "\n"
-            );
+            writer.write(String.format("%-20s %-15s %-12s %-15s %-5d%n",
+                    symbol.lexeme,
+                    symbol.category,
+                    symbol.type,
+                    symbol.value,
+                    symbol.line));
         }
 
         writer.close();

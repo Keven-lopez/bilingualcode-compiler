@@ -14,6 +14,7 @@ program
 
 statement
     : declaration
+    | constantDecl
     | assignment
     | inputStmt
     | displayStmt
@@ -28,10 +29,8 @@ declaration
     : DEFINE IDENTIFIER AS type SEMICOLON
     ;
 
-type
-    : NUMBER
-    | TEXT
-    | BOOLEAN
+constantDecl
+    : CONST IDENTIFIER AS type ASSIGN expression SEMICOLON
     ;
 
 assignment
@@ -47,15 +46,15 @@ displayStmt
     ;
 
 ifStmt
-    : IF condition THEN statement* (ELSE statement*)? ENDIF SEMICOLON
+    : IF expression THEN statement* (ELSE statement*)? ENDIF SEMICOLON
     ;
 
 whileStmt
-    : WHILE condition DO statement* ENDWHILE SEMICOLON
+    : WHILE expression DO statement* ENDWHILE SEMICOLON
     ;
 
 functionDecl
-    : FUNCTION IDENTIFIER LPAREN paramList? RPAREN DO statement* RETURN expression SEMICOLON ENDFUNCTION SEMICOLON
+    : FUNCTION IDENTIFIER LPAREN paramList? RPAREN DO statement* (returnStmt)? ENDFUNCTION SEMICOLON
     ;
 
 paramList
@@ -74,24 +73,21 @@ returnStmt
     : RETURN expression SEMICOLON
     ;
 
-condition
-    : expression comparator expression
-    ;
-
-comparator
-    : EQ
-    | NEQ
-    | GT
-    | LT
-    | GTE
-    | LTE
+type
+    : NUMBER
+    | TEXT
+    | BOOLEAN
     ;
 
 expression
     : expression operator expression
     | LPAREN expression RPAREN
+    | literal
     | IDENTIFIER
-    | NUMBER_LITERAL
+    ;
+
+literal
+    : NUMBER_LITERAL
     | STRING_LITERAL
     | TRUE
     | FALSE
@@ -102,80 +98,111 @@ operator
     | MINUS
     | MULT
     | DIV
+    | EQ
+    | NEQ
+    | LT
+    | GT
+    | LTE
+    | GTE
     | AND
     | OR
     ;
 
 // =====================
 // LEXER RULES
-// English + Spanish aliases
 // =====================
 
+// Program structure
 START       : 'start' | 'inicio';
 FINISH      : 'finish' | 'fin';
 
+// Variable declarations
 DEFINE      : 'define' | 'definir';
 AS          : 'as' | 'como';
+CONST       : 'const' | 'constante';
 
+// Assignment
 SET         : 'set' | 'poner';
-TO          : 'to' | 'a';
+TO          : 'to' | 'para';
+ASSIGN      : '=';
 
+// Input / Output
 INPUT       : 'input' | 'entrada';
 DISPLAY     : 'display' | 'mostrar';
 
+// Conditionals
 IF          : 'if' | 'si';
 THEN        : 'then' | 'entonces';
 ELSE        : 'else' | 'sino';
 ENDIF       : 'end_if' | 'fin_si';
 
+// Loops
 WHILE       : 'while' | 'mientras';
 DO          : 'do' | 'hacer';
 ENDWHILE    : 'end_while' | 'fin_mientras';
 
+// Functions
 FUNCTION    : 'function' | 'funcion';
 ENDFUNCTION : 'end_function' | 'fin_funcion';
-
 RETURN      : 'return' | 'retornar';
 CALL        : 'call' | 'llamar';
 
+// Data types
 NUMBER      : 'number' | 'numero';
 TEXT        : 'text' | 'texto';
 BOOLEAN     : 'boolean' | 'booleano';
 
+// Boolean values
 TRUE        : 'true' | 'verdadero';
 FALSE       : 'false' | 'falso';
 
+// Logical operators
 AND         : 'and' | 'y';
 OR          : 'or' | 'o';
+NOT         : 'not' | 'no';
 
-// Operators
+// Arithmetic operators
 PLUS        : '+';
 MINUS       : '-';
 MULT        : '*';
 DIV         : '/';
 
+// Comparison operators
 EQ          : '==';
 NEQ         : '!=';
-GT          : '>';
 LT          : '<';
-GTE         : '>=';
+GT          : '>';
 LTE         : '<=';
+GTE         : '>=';
 
 // Symbols
 LPAREN      : '(';
 RPAREN      : ')';
-COMMA       : ',';
+LBRACE      : '{';
+RBRACE      : '}';
 SEMICOLON   : ';';
+COMMA       : ',';
 
 // Literals
-NUMBER_LITERAL : [0-9]+ ('.' [0-9]+)?;
-STRING_LITERAL : '"' .*? '"';
+NUMBER_LITERAL
+    : [0-9]+ ('.' [0-9]+)?
+    ;
 
-// Comments
-COMMENT     : '//' ~[\r\n]* -> skip;
+STRING_LITERAL
+    : '"' .*? '"'
+    ;
 
-// Identifier
-IDENTIFIER  : [a-zA-Z_][a-zA-Z0-9_]*;
+// Identifiers
+IDENTIFIER
+    : [a-zA-Z_][a-zA-Z0-9_]*
+    ;
 
-// Whitespace
-WS          : [ \t\r\n]+ -> skip;
+// Ignore whitespace
+WS
+    : [ \t\r\n]+ -> skip
+    ;
+
+// Lexical error token
+ERROR_CHAR
+    : .
+    ;
