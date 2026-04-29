@@ -7,7 +7,7 @@ import java.io.IOException;
 public class RegexTableGenerator {
 
     public void generate() throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("output/regex_table.txt"));
+        BufferedWriter writer = new BufferedWriter(new FileWriter("output/lexicalOutput/regex_table.txt"));
 
         writer.write(String.format("%-20s %-50s%n", "TOKEN TYPE", "REGEX"));
         writer.write(String.format("%-20s %-50s%n", "--------------------", "--------------------------------------------------"));

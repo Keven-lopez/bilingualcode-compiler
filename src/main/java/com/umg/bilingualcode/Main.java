@@ -1,13 +1,13 @@
 package com.umg.bilingualcode;
 
 
-import com.umg.bilingualcode.SyntacticGenerators.SyntacticTreeGenerator;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.ParseTree;
 import java.io.IOException;
 import java.util.List;
 
 import com.umg.bilingualcode.LexicalGenerators.*;
-import org.antlr.v4.runtime.tree.ParseTree;
+import com.umg.bilingualcode.SyntacticGenerators.*;
 
 
 public class Main {
@@ -48,6 +48,7 @@ public class Main {
             ParseTree tree = parser.program();
 
             // Generate syntax tree output
+
             SyntacticTreeGenerator syntacticTreeGenerator = new SyntacticTreeGenerator();
             syntacticTreeGenerator.generate(tree, parser);
 

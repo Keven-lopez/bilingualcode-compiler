@@ -134,7 +134,7 @@ public class SymbolTableGenerator {
     }
 
     private void writeSymbolTable(Map<String, SymbolInfo> symbolTable) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("output/symbol_table.txt"));
+        BufferedWriter writer = new BufferedWriter(new FileWriter("output/lexicalOutput/symbol_table.txt"));
 
         writer.write(String.format("%-20s %-15s %-12s %-15s %-5s%n",
                 "LEXEME", "CATEGORY", "TYPE", "VALUE", "LINE"));

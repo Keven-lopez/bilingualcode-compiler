@@ -24,8 +24,8 @@ public class LexicalErrorGenerator {
     );
 
     public void generate(List<Token> tokens) throws IOException {
-        BufferedWriter errorWriter = new BufferedWriter(new FileWriter("output/lexical_errors.txt"));
-        BufferedWriter reportWriter = new BufferedWriter(new FileWriter("output/error_identification.txt"));
+        BufferedWriter errorWriter = new BufferedWriter(new FileWriter("output/lexicalOutput/lexical_errors.txt"));
+        BufferedWriter reportWriter = new BufferedWriter(new FileWriter("output/lexicalOutput/error_identification.txt"));
 
         errorWriter.write(String.format("%-20s %-25s %-10s %-10s%n",
                 "LEXEME", "ERROR TYPE", "LINE", "COLUMN"));

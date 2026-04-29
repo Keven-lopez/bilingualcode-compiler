@@ -9,7 +9,7 @@ import java.io.IOException;
 public class SyntacticTreeGenerator {
 
     public void generate(ParseTree tree, SpanglishCodeParser parser) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("output/syntactic_tree.txt"));
+        BufferedWriter writer = new BufferedWriter(new FileWriter("output/syntaxOutput/syntactic_tree.txt"));
 
         writeTree(tree, parser, writer, 0);
 
