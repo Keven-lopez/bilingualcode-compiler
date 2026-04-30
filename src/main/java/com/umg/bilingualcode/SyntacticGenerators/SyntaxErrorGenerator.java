@@ -11,7 +11,7 @@ public class SyntaxErrorGenerator extends BaseErrorListener {
     private BufferedWriter writer;
 
     public SyntaxErrorGenerator() throws IOException {
-        writer = new BufferedWriter(new FileWriter("output/syntax_errors.txt"));
+        writer = new BufferedWriter(new FileWriter("output/syntaxOutput/syntax_errors.txt"));
 
         writer.write(String.format("%-20s %-25s %-10s %-10s%n",
                 "LEXEME", "ERROR TYPE", "LINE", "COLUMN"));

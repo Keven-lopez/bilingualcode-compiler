@@ -1,10 +1,11 @@
 start
-const limite as numero = 3;
-define contador as number;
+
+constante limite as numero = 3;
+define contador como number;
 set contador to 1;
 
 function verificar(x) do
-    if x == 2 then
+    if x == 2 entonces
         mostrar "Valor especial";
     else
         display "Valor normal";

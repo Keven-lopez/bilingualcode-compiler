@@ -1,6 +1,7 @@
 package com.umg.bilingualcode;
 
 
+import com.umg.bilingualcode.ExecutionGenerators.ExecutionGenerator;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import java.io.IOException;
@@ -14,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            String sourceFile = "input.spc";
+            String sourceFile = "input/input3.spc";
 
             // Read source file
             CharStream input = CharStreams.fromFileName(sourceFile);
@@ -41,21 +42,30 @@ public class Main {
             // Reset token stream before parsing
             tokens.seek(0);
 
-            // Parser
             SpanglishCodeParser parser = new SpanglishCodeParser(tokens);
+            SyntacticTreeGenerator syntacticTreeGenerator = new SyntacticTreeGenerator();
 
-            // Parse once and store tree
+            SyntaxErrorGenerator syntaxErrorGenerator = new SyntaxErrorGenerator();
+
+            parser.removeErrorListeners();
+            parser.addErrorListener(syntaxErrorGenerator);
+
             ParseTree tree = parser.program();
 
-            // Generate syntax tree output
+            syntaxErrorGenerator.close();
 
-            SyntacticTreeGenerator syntacticTreeGenerator = new SyntacticTreeGenerator();
-            syntacticTreeGenerator.generate(tree, parser);
-
-            // Compilation status
             if (parser.getNumberOfSyntaxErrors() == 0) {
+                syntacticTreeGenerator.generate(tree, parser);
+
+                ExecutionGenerator executionGenerator = new ExecutionGenerator();
+                executionGenerator.execute(tree);
+
                 System.out.println("Compilation successful.");
+
             } else {
+
+                syntacticTreeGenerator.generateEmpty();
+
                 System.out.println("Compilation finished with syntax errors.");
             }
 

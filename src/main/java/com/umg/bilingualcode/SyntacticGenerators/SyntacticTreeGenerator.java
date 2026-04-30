@@ -16,6 +16,12 @@ public class SyntacticTreeGenerator {
         writer.close();
     }
 
+    public void generateEmpty() throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter("output/syntaxOutput/syntactic_tree.txt"));
+        writer.write("");
+        writer.close();
+    }
+
     private void writeTree(ParseTree tree, SpanglishCodeParser parser,
                            BufferedWriter writer, int indent) throws IOException {
 
