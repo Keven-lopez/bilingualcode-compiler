@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            String sourceFile = "input/input3.spc";
+            String sourceFile = "input/incorrect/input3.spc";
 
             // Read source file
             CharStream input = CharStreams.fromFileName(sourceFile);
