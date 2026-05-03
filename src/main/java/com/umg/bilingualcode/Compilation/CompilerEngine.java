@@ -1,62 +1,68 @@
-package com.umg.bilingualcode;
+package com.umg.bilingualcode.Compilation;
 
-
-
-import com.umg.bilingualcode.ExecutionGenerators.ExecutionGenerator;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
+import com.umg.bilingualcode.SpanglishCodeLexer;
+import com.umg.bilingualcode.SpanglishCodeParser;
+import com.umg.bilingualcode.LexicalGenerators.*;
+import com.umg.bilingualcode.SyntacticGenerators.*;
+import com.umg.bilingualcode.ExecutionGenerators.*;
+
 import java.io.IOException;
 import java.util.List;
 
-import com.umg.bilingualcode.LexicalGenerators.*;
-import com.umg.bilingualcode.SyntacticGenerators.*;
+public class CompilerEngine {
 
+    public void compileAndExecute(String sourceFile) {
 
-public class Main {
-
-    public static void main(String[] args) {
         try {
-            String sourceFile = "input/incorrect/INCORRECTinput3.spc";
-
-            // Read source file
+            // =========================
+            // Read file
+            // =========================
             CharStream input = CharStreams.fromFileName(sourceFile);
 
+            // =========================
             // Lexer
+            // =========================
             SpanglishCodeLexer lexer = new SpanglishCodeLexer(input);
 
-            // Token stream
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             tokens.fill();
 
             List<Token> tokenList = tokens.getTokens();
 
-            // Generate lexical analysis outputs
-            SymbolTableGenerator symbolTableGenerator = new SymbolTableGenerator();
-            symbolTableGenerator.generate(tokenList);
+            // =========================
+            // Lexical outputs
+            // =========================
+            new SymbolTableGenerator().generate(tokenList);
+            new LexicalErrorGenerator().generate(tokenList);
+            new RegexTableGenerator().generate();
 
-            LexicalErrorGenerator lexicalErrorGenerator = new LexicalErrorGenerator();
-            lexicalErrorGenerator.generate(tokenList);
-
-            RegexTableGenerator regexTableGenerator = new RegexTableGenerator();
-            regexTableGenerator.generate();
-
-            // Reset token stream before parsing
+            // =========================
+            // Reset tokens before parsing
+            // =========================
             tokens.seek(0);
 
+            // =========================
+            // Parser
+            // =========================
             SpanglishCodeParser parser = new SpanglishCodeParser(tokens);
-            SyntacticTreeGenerator syntacticTreeGenerator = new SyntacticTreeGenerator();
 
             SyntaxErrorGenerator syntaxErrorGenerator = new SyntaxErrorGenerator();
-
             parser.removeErrorListeners();
             parser.addErrorListener(syntaxErrorGenerator);
 
             ParseTree tree = parser.program();
-
             syntaxErrorGenerator.close();
 
+            // =========================
+            // Syntactic + Execution
+            // =========================
+            SyntacticTreeGenerator treeGenerator = new SyntacticTreeGenerator();
+
             if (parser.getNumberOfSyntaxErrors() == 0) {
-                syntacticTreeGenerator.generate(tree, parser);
+
+                treeGenerator.generate(tree, parser);
 
                 ExecutionGenerator executionGenerator = new ExecutionGenerator();
                 executionGenerator.execute(tree);
@@ -65,14 +71,12 @@ public class Main {
 
             } else {
 
-                syntacticTreeGenerator.generateEmpty();
-
+                treeGenerator.generateEmpty();
                 System.out.println("Compilation finished with syntax errors.");
             }
 
         } catch (IOException e) {
             System.err.println("Error: " + e.getMessage());
         }
-
     }
 }
