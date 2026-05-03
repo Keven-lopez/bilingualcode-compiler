@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class SemanticOutputViewer {
+public class SyntacticOutputViewer {
 
     private static final String BASE_PATH = "output/syntaxOutput/";
 

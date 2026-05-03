@@ -1,7 +1,6 @@
 package com.umg.bilingualcode;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Scanner;
 import com.umg.bilingualcode.Compilation.CompilerEngine;
 import com.umg.bilingualcode.Utils.*;
@@ -127,7 +126,7 @@ public class UI {
     // OPTION 4: Semantical Outputs
     // =========================
     private static void showSemanticalOutputs() {
-        SemanticOutputViewer viewer = new SemanticOutputViewer();
+        SyntacticOutputViewer viewer = new SyntacticOutputViewer();
         viewer.showAll();
     }
 
